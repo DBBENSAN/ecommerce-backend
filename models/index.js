@@ -25,7 +25,7 @@ Product.belongsTo(Category, {
   through: ProductTag,
   foreignKey: 'tag_id',
   });
-  
+
 module.exports = {
   Product,
   Category,
