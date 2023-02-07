@@ -18,7 +18,7 @@ router.get('/:id', async (req, res) => {
     const categoryData = await Category.findByPk(req.params.id, {
       include: { model: Product },
     });
-    if(!categoryData) {
+    if (!categoryData) {
       return res.status(404).json({ message: 'Category not found' })
     }
     res.status(200).json(categoryData);
@@ -40,34 +40,50 @@ router.post('/', async (req, res) => {
 
 router.put('/:id', async (req, res) => {
   try {
-    const [updatedRowsCount, updatedRows] = await Category.update({
-    category_name: req.body.category_name
-    }, {
-    where: {
-    id: req.params.id
-    }
-    });
+    const [updatedRowsCount, updatedRows] = await Category.update(
+      { category_name: req.body.category_name },
+      {
+        where: {
+          id: req.params.id
+        }
+      }
+    );
     if (!updatedRowsCount) {
-    return res.status(404).json({ message: 'Category not found' });
+      return res.status(404).json({ message: 'Category not found' });
     }
-    res.json(updatedRows[0]);
-    } catch (err) {
+    const updatedCategory = await Category.findByPk(req.params.id);
+    res.status(200).json(updatedCategory);
+  } catch (err) {
     console.error(err);
     res.status(500).json({ message: 'Error updating category' });
-    }
+  }
 });
 
+// try {
+//   const categoryData = await Category.destroy({
+//     where: {
+//       id: req.params.id
+//     }
+//   });
+//   if (!categoryData) {
+//     return res.status(404).json({ message: 'Category not found' });
+//   }
+//   res.status(200).json({ message: 'Done!' });
+// } catch (err) {
+//   console.error(err);
+//   res.status(500).json({ message: 'Error deleting category' });
+// }
 router.delete('/:id', async (req, res) => {
   try {
     const categoryData = await Category.destroy({
       where: {
         id: req.params.id,
       }
-    });
-    if(!categoryData) {
-      return res.status(404).json({ message: 'Category not found' })
+    })
+    if (!categoryData) {
+      res.status(404).json({ message: "Couldnt find it" })
     }
-    res.status(200).json(categoryData);
+    return res.status(200).json({ message: 'Done!' });
   } catch (err) {
     res.status(500).json();
   }
